@@ -1,15 +1,27 @@
-import { Outlet } from "react-router-dom/dist"
-import ScrollToTop from "../components/ScrollToTop"
-import { Navbar } from "../components/Navbar"
-import { Footer } from "../components/Footer"
+import { Outlet } from "react-router-dom";
+import ScrollToTop from "../components/ScrollToTop";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import { useState } from "react";
 
-// Base component that maintains the navbar and footer throughout the page and the scroll to top functionality.
 export const Layout = () => {
+    const [favorites, setFavorites] = useState([]);
+    const addFavorite = (item) => {
+        if (!favorites.some(fav => fav.uid === item.uid && fav.type === item.type)) {
+            setFavorites([...favorites, item]);
+        }
+    };
+
+    const removeFavorite = (uid, type) => {
+        setFavorites(favorites.filter(fav => !(fav.uid === uid && fav.type === type)));
+    };
+
     return (
         <ScrollToTop>
-            <Navbar />
-                <Outlet />
+            <Navbar favorites={favorites} removeFavorite={removeFavorite} />
+            <Outlet context={{ addFavorite, favorites }} />
+
             <Footer />
         </ScrollToTop>
-    )
-}
+    );
+};
